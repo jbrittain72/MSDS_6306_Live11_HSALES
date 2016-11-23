@@ -11,50 +11,90 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Bring in HSALES dataset.  
-This is data of Monthly sales of new one-family houses sold in the USA since 1973.
-http://search.r-project.org/library/fma/html/hsales.html
-
-1)	Go through the electric equipment example. 
-
 More examples of forecasting!
 Code to load data:
 library(fpp) #fpp package must be installed first
-data(hsales)
-(HSALES assigned data set)
-1a)	Plot the time series. Can you identify seasonal fluctuations and/or a trend? 
-1b)	Use a classical decomposition to calculate the trend-cycle and seasonal indices. 
-1c)	Do the results support the graphical interpretation from part (a)? 
-1d)	Compute and plot the seasonally adjusted data. 
-1e)	Change one observation to be an outlier (e.g., add 500 to one observation), and recompute the seasonally adjusted data. What is the effect of the outlier? 
-1f)	Does it make any difference if the outlier is near the end rather than in the middle of the time series? 
-1g)	Use STL to decompose the series. 
 
-
-
-```{r hsales}
+```{r libs}
 library(fpp) #fpp package must be installed first
+```
 
+# Bring in HSALES dataset. 
+(HSALES data set assigned to our group in class)
+This is data of Monthly sales of new one-family houses sold in the USA since 1973.
+http://search.r-project.org/library/fma/html/hsales.html
+
+```{r load}
 data(hsales)
-head(hsales)
-plot(hsales)
+hsales
+```
 
+1)	Go through the electric equipment example with assigned dataset (HSALES). 
+
+1a)	Plot the time series. 
+
+```{r 1a}
+plot(hsales)
+```
+
+Can you identify seasonal fluctuations and/or a trend? 
+
+### Yes, you can see a high and low within each year on the time series plot.
+
+
+1b)	Use a classical decomposition to calculate the trend-cycle and seasonal indices. 
+
+```{r 1b}
 hsfitd <- decompose(hsales)
 plot(hsfitd)
+```
 
-hsfit <- stl(hsales, s.window=5)
-plot(hsfit)
+1c)	Do the results support the graphical interpretation from part (a)? 
 
+### Yes, the results show the various graphs and present more insite to the original graph.
+
+
+1d)	Compute and plot the seasonally adjusted data. 
+
+```{r 1d}
 hsadj <- seasadj(hsfitd)
 plot(hsadj)
+```
 
-hsales2 <- ts(c(hsales[1:54],hsales[55]+200,hsales[56:191]),start=c(1996,1),frequency=12)
+1e)	Change one observation to be an outlier (e.g., add 500 to one observation), and recompute the seasonally adjusted data.
+
+```{r 1e}
+hsales2 <- ts(c(hsales[1:54],hsales[55]+500,hsales[56:191]),start=c(1996,1),frequency=12)
 plot(hsales2)
 
+hsales2 <- ts(c(hsales[1:184],hsales[185]+500,hsales[186:191]),start=c(1996,1),frequency=12)
+plot(hsales2)
+```
+
+What is the effect of the outlier? 
+
+### The outlier pushes the entire graph down to the bottom where it is harder to see the trend in detail because the Y axis legend gets compressed.  It also affects the values close to it and bumps the trend for a few months.
+
+
+1f)	Does it make any difference if the outlier is near the end rather than in the middle of the time series? 
+
+### If the outlier was at the end it would have less effect on the general trend but could throw predicted outcomes off because there would not be as many values after it to correct it and pull it back.
+
+
+1g)	Use STL to decompose the series. 
+
+```{r 1g}
+hsfit <- stl(hsales, s.window=5)
+plot(hsfit)
+```
+
+
+Additional example modifications to the plot to add to the readability 
+and add the fit line over the original plot
+```{r additional}
 plot(hsales, col="gray",
   main="Sales of new one-family houses, USA",
   ylab="Sales", xlab="Year")
 lines(hsfit$time.series[,2],col="red",ylab="Trend")
-
 ```
 
