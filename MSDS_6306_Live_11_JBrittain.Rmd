@@ -1,0 +1,60 @@
+---
+title: 'MSDS 6306 Live Session #11'
+author: "Jim Brittain"
+date:   "November 20, 2016"
+output: 
+  html_document:
+    keep_md: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Bring in HSALES dataset.  
+This is data of Monthly sales of new one-family houses sold in the USA since 1973.
+http://search.r-project.org/library/fma/html/hsales.html
+
+1)	Go through the electric equipment example. 
+
+More examples of forecasting!
+Code to load data:
+library(fpp) #fpp package must be installed first
+data(hsales)
+(HSALES assigned data set)
+1a)	Plot the time series. Can you identify seasonal fluctuations and/or a trend? 
+1b)	Use a classical decomposition to calculate the trend-cycle and seasonal indices. 
+1c)	Do the results support the graphical interpretation from part (a)? 
+1d)	Compute and plot the seasonally adjusted data. 
+1e)	Change one observation to be an outlier (e.g., add 500 to one observation), and recompute the seasonally adjusted data. What is the effect of the outlier? 
+1f)	Does it make any difference if the outlier is near the end rather than in the middle of the time series? 
+1g)	Use STL to decompose the series. 
+
+
+
+```{r hsales}
+library(fpp) #fpp package must be installed first
+
+data(hsales)
+head(hsales)
+plot(hsales)
+
+hsfitd <- decompose(hsales)
+plot(hsfitd)
+
+hsfit <- stl(hsales, s.window=5)
+plot(hsfit)
+
+hsadj <- seasadj(hsfitd)
+plot(hsadj)
+
+hsales2 <- ts(c(hsales[1:54],hsales[55]+200,hsales[56:191]),start=c(1996,1),frequency=12)
+plot(hsales2)
+
+plot(hsales, col="gray",
+  main="Sales of new one-family houses, USA",
+  ylab="Sales", xlab="Year")
+lines(hsfit$time.series[,2],col="red",ylab="Trend")
+
+```
+
